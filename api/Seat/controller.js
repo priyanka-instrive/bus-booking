@@ -4,21 +4,18 @@ const { generateSeatPattern } = require("../../system/utils/checks");
 async function registerSeat(req, res) {
   try {
     const { bus_id } = req.body;
-    const totalSeats = 36; // Adjust this according to your bus capacity
+    const totalSeats = 36;
 
     // Generate seat pattern dynamically
     const seatPattern = generateSeatPattern(totalSeats);
-    console.log("seatPattern==>>>>", seatPattern);
 
     // Prepare seat data with dynamically generated seat numbers
     const seatData = seatPattern.map((seat_number) => ({
-      number: seat_number, // This should be the seat number string
-      is_booked: false, // Initially, seats are not booked
-      booking_date: null, // No booking date initially
-      booking_id: null, // No booking ID initially
+      number: seat_number,
+      is_booked: false,
+      booking_date: null,
+      booking_id: null,
     }));
-
-    console.log("seatData==>>>", seatData);
 
     // Create the bus document with the seat data
     const newSeats = await service.create({ bus_id, seat_number: seatData });

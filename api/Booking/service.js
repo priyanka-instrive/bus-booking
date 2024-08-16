@@ -50,7 +50,7 @@ const updateBookingStatus = async (booking_id, status) => {
   }
 
   if (seatUpdateData) {
-    const p = await SeatRegistrationSchema.updateMany(
+    await SeatRegistrationSchema.updateMany(
       {
         bus_id: booking.bus_id,
         "seat_number.number": { $in: booking.seats_booked },

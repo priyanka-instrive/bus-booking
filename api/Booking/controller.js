@@ -62,12 +62,6 @@ const cancelBooking = async (req, res) => {
 
     const updatedBooking = await service.updateBookingStatus(_id, "canceled");
 
-    await service.freeUpSeats(
-      existingBooking.bus_id,
-      existingBooking.booking_date,
-      existingBooking.seats_booked
-    );
-
     return res.status(200).json({
       message: "Booking canceled successfully",
       data: updatedBooking,

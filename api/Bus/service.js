@@ -14,20 +14,15 @@ const create = async (params) => {
 };
 
 const findBus = async (params) => {
-  console.log("bus_number==>>", params);
   const data = await BusRegistrationSchema.findOne({
     bus_number: params.bus_number,
   });
-  console.log("data==>>>", data);
 
   return data;
 };
 
 const getData = async () => {
-  console.log("1111111111");
-
   const data = await BusRegistrationSchema.find();
-  console.log("data==>>", data);
 
   return data;
 };

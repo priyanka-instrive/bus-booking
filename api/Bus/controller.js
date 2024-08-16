@@ -46,7 +46,6 @@ const registerBus = async (req, res) => {
 async function fetchBusData(req, res) {
   try {
     const data = await service.getData();
-    console.log("data111==>>", data);
 
     if (!data || data.length === 0) {
       return res.status(404).json({ message: "Data not found" });
@@ -69,25 +68,16 @@ async function updateBusData(req, res) {
     const { _id } = req.params;
     const updateData = req.body;
 
-    console.log("Request Params:", req.params);
-    console.log("Request Body:", req.body);
-
-    // Validate that _id is provided
     if (!_id) {
       return res.status(400).json({ message: "Bus ID is required" });
     }
 
-    // Ensure that updateData is not empty
     if (Object.keys(updateData).length === 0) {
       return res.status(400).json({ message: "Update data cannot be empty" });
     }
 
-    // Call the service layer to update the bus data
     const result = await service.updateBusInDb(_id, updateData);
 
-    console.log("Update Result:", result);
-
-    // Check if the bus was found and updated
     if (result.matchedCount === 0) {
       return res.status(404).json({ message: "Bus not found" });
     }
@@ -98,7 +88,6 @@ async function updateBusData(req, res) {
         .json({ message: "No changes were made to the bus data" });
     }
 
-    // Respond with a success message if the update was successful
     return res.status(200).json({
       message: "Bus updated successfully",
     });
@@ -116,11 +105,7 @@ async function deleteBus(req, res) {
       return res.status(400).json({ message: "Bus ID is required" });
     }
 
-    console.log("Request Params:", req.params);
-
     const result = await service.deleteBusFromDb(_id);
-
-    console.log("Delete Result:", result);
 
     if (result.deletedCount === 0) {
       return res.status(404).json({ message: "Bus not found" });
