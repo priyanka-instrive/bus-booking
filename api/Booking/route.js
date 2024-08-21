@@ -11,6 +11,12 @@ router.post(
   controller.createBooking
 );
 
-router.post("/cancel_booking/:_id", controller.cancelBooking);
+router.get("/retrive_charge", controller.retrieveCharge);
+
+router.post(
+  "/cancel_booking/:_id",
+  celebrate(schema.cancelBookingValidationSchema),
+  controller.cancelBooking
+);
 
 module.exports = router;

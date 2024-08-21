@@ -10,7 +10,6 @@ router.post(
   celebrate(schema.userRegistrationValidationSchema, schema.options),
   controller.registerUser
 );
-
 router.post(
   "/sign_in",
   celebrate(schema.signin, schema.options),

@@ -28,9 +28,19 @@ const bookingSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ["confirmed", "canceled"],
-      default: "confirmed",
+      enum: ["confirmed", "canceled", "pending"],
+      default: "pending",
     },
+    payment_id: {
+      type: Schema.Types.ObjectId,
+      ref: "Payment",
+      default: null,
+    },
+    checkout_session_id: { type: String },
+    payment_status: {
+      type: String,
+    },
+    latest_charge: { type: String },
   },
   {
     timestamps: true,

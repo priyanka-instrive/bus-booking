@@ -3,9 +3,12 @@ const bcrypt = require("bcrypt");
 const jwt = require("../../system/middleware/jwt");
 
 const registerUser = async (req, res) => {
+  console.log("00000000000");
   const { name, email, password, phone_number, role_id } = req.body;
+  console.log("req.body==>>>", name, email, password, phone_number, role_id);
 
   const existingUser = await service.findUser(email);
+  console.log("existingUser==>>>", existingUser);
   if (existingUser) {
     return res.status(400).json({ error: "Email Is Dublicate" });
   }
