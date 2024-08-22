@@ -14,22 +14,6 @@ const isSeatAlreadyBooked = async (bus_id, booking_date, seats_booked) => {
   return !!existingBooking;
 };
 
-// const createBooking = async (bookingData) => {
-//   try {
-//     // const payment = new PaymentRegistrationSchema(paymentDetails);
-//     // await payment.save();
-
-//     // bookingData.payment_id = payment._id;
-//     // bookingData.payment_status = payment.status;
-//     const newBooking = await BookingRegistrationSchema.create(bookingData);
-
-//     return newBooking;
-//   } catch (error) {
-//     console.error("Error in bookingService createBooking method:", error);
-//     throw error;
-//   }
-// };
-
 const createBooking = async (bookingData) => {
   try {
     const newBooking = await BookingRegistrationSchema.create(bookingData);
@@ -91,69 +75,69 @@ const updateBookingStatus = async (booking_id, status) => {
   return booking;
 };
 
-const processPayment = async (paymentId) => {
-  const payment = await PaymentRegistrationSchema.findById(paymentId);
-  if (!payment) throw new Error("Payment not found");
+// const processPayment = async (paymentId) => {
+//   const payment = await PaymentRegistrationSchema.findById(paymentId);
+//   if (!payment) throw new Error("Payment not found");
 
-  const paymentIntent = await stripe.paymentIntents.retrieve(
-    payment.paymentIntentId
-  );
+//   const paymentIntent = await stripe.paymentIntents.retrieve(
+//     payment.paymentIntentId
+//   );
 
-  if (paymentIntent.status === "succeeded") {
-    payment.status = "succeeded";
-    await payment.save();
+//   if (paymentIntent.status === "succeeded") {
+//     payment.status = "succeeded";
+//     await payment.save();
 
-    await BookingRegistrationSchema.updateOne(
-      { payment_id: payment._id },
-      { $set: { payment_status: "completed" } }
-    );
-  } else {
-    payment.status = paymentIntent.status;
-    await payment.save();
-  }
+//     await BookingRegistrationSchema.updateOne(
+//       { payment_id: payment._id },
+//       { $set: { payment_status: "completed" } }
+//     );
+//   } else {
+//     payment.status = paymentIntent.status;
+//     await payment.save();
+//   }
 
-  return payment;
-};
+//   return payment;
+// };
 
-const createPaymentIntent = async (amount, currency = "USD", paymentMethod) => {
-  try {
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: amount * 100,
-      currency: currency,
-      payment_method: paymentMethod,
-      automatic_payment_methods: {
-        enabled: true,
-        allow_redirects: "never",
-      },
-    });
+// const createPaymentIntent = async (amount, currency = "USD", paymentMethod) => {
+//   try {
+//     const paymentIntent = await stripe.paymentIntents.create({
+//       amount: amount * 100,
+//       currency: currency,
+//       payment_method: paymentMethod,
+//       automatic_payment_methods: {
+//         enabled: true,
+//         allow_redirects: "never",
+//       },
+//     });
 
-    return paymentIntent.id;
-  } catch (error) {
-    console.error("Error creating payment intent:", error);
-    throw error;
-  }
-};
+//     return paymentIntent.id;
+//   } catch (error) {
+//     console.error("Error creating payment intent:", error);
+//     throw error;
+//   }
+// };
 
-const refundPayment = async (paymentId) => {
-  try {
-    const payment = await PaymentRegistrationSchema.findById(paymentId);
-    if (!payment) throw new Error("Payment not found");
+// const refundPayment = async (paymentId) => {
+//   try {
+//     const payment = await PaymentRegistrationSchema.findById(paymentId);
+//     if (!payment) throw new Error("Payment not found");
 
-    const refund = await stripe.refunds.create({
-      payment_intent: payment.paymentIntentId,
-    });
+//     const refund = await stripe.refunds.create({
+//       payment_intent: payment.paymentIntentId,
+//     });
 
-    if (refund.status === "succeeded") {
-      payment.status = "refunded";
-      await payment.save();
-    }
+//     if (refund.status === "succeeded") {
+//       payment.status = "refunded";
+//       await payment.save();
+//     }
 
-    return refund;
-  } catch (error) {
-    console.error("Error processing refund:", error);
-    throw error;
-  }
-};
+//     return refund;
+//   } catch (error) {
+//     console.error("Error processing refund:", error);
+//     throw error;
+//   }
+// };
 
 const create = async (params) => {
   try {
@@ -166,16 +150,12 @@ const create = async (params) => {
 };
 
 const updateBookingAfterPayment = async (checkoutSessionId, updateData) => {
-  console.log("checkoutSessionId==>>>", checkoutSessionId);
-  console.log("updateData==>>>", updateData);
-
   try {
     const updatedBooking = await BookingRegistrationSchema.findOneAndUpdate(
       { checkout_session_id: checkoutSessionId },
       { $set: updateData },
       { new: true }
     );
-    console.log("updatedBooking==>>", updatedBooking);
     return updatedBooking;
   } catch (error) {
     console.error(
@@ -193,7 +173,7 @@ module.exports = {
   create,
   getBookingById,
   updateBookingStatus,
-  processPayment,
-  createPaymentIntent,
-  refundPayment,
+  // processPayment,
+  // createPaymentIntent,
+  // refundPayment,
 };

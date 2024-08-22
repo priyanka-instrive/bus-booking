@@ -1,6 +1,5 @@
 const express = require("express");
 const app = express();
-const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const cors = require("cors");
 const helmet = require("helmet");
@@ -17,48 +16,41 @@ if (process.env.NODE_ENV === "local") {
   });
 }
 
-app.post(
-  "/webhook",
-  bodyParser.raw({ type: "application/json" }),
-  (req, res) => {
-    const sig = req.headers["stripe-signature"];
+app.post("/webhook", express.raw({ type: "application/json" }), (req, res) => {
+  const sig = req.headers["stripe-signature"];
 
-    let event;
-    try {
-      event = stripe.webhooks.constructEvent(
-        req.body,
-        sig,
-        process.env.ENDPOINTSECRETE
-      );
+  let event;
+  try {
+    event = stripe.webhooks.constructEvent(
+      req.body,
+      sig,
+      process.env.ENDPOINTSECRETE
+    );
 
-      switch (event.type) {
-        case "payment_method.attached": {
-          // paymentcontroller.createPaymentLog(event.data.object, event.type);
-          break;
-        }
-        case "payment_method.detached": {
-          // paymentcontroller.createPaymentLog(event.data.object, event.type);
-          break;
-        }
-        case "payment_intent.succeeded":
-        case "payment_intent.payment_failed": {
-          paymentcontroller.createPaymentLog(event.data.object, event.type);
-          break;
-        }
-        default:
-          // paymentcontroller.createPaymentLog(event.data.object, event.type);
-          break;
+    switch (event.type) {
+      case "payment_method.attached": {
+        break;
       }
-      res.status(200).end();
-    } catch (err) {
-      console.error(`Error verifying webhook: ${err.message}`);
-      res.status(400).send(`Webhook Error: ${err.message}`);
+      case "payment_method.detached": {
+        break;
+      }
+      case "payment_intent.succeeded":
+      case "payment_intent.payment_failed": {
+        paymentcontroller.createPaymentLog(event.data.object, event.type);
+        break;
+      }
+      default:
+        break;
     }
+    res.status(200).end();
+  } catch (err) {
+    console.error(`Error verifying webhook: ${err.message}`);
+    res.status(400).send(`Webhook Error: ${err.message}`);
   }
-);
+});
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use(cors(middlewareConfig.cors));
 app.use(helmet());
